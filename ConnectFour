@@ -1,0 +1,108 @@
+import java.util.Arrays;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class ConnectFour {
+
+    private final int width;
+    private final int height;
+    private final char[][] board;
+    private int lastCol = -1;
+    private int lastTop = -1;
+
+
+    public ConnectFour(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.board = new char[height][];
+        for (int i = 0; i < height; i++) {
+            Arrays.fill(board[i] = new char[width], '.');
+        }
+    }
+    @Override
+    public String toString() {
+        return Arrays.stream(board)
+                .map(String::new)
+                .collect(Collectors.joining("\n"));
+    }
+
+    /**
+     * Receiving a number from the player.
+     * Check whether the number is valid.
+     * Update board by selection of player.
+     */
+    public void updateBoardBySelection(char symbol, Scanner range) {
+        do {
+            System.out.print("\nPlayer " + symbol + " turn: ");
+            int col = range.nextInt();
+
+            if (! (0 <= col && col < width)) {
+                System.out.println("Column must be between 0 and " +
+                        (width - 1));
+                continue;
+            }
+            for (int i = height - 1; i >= 0; i--) {
+                if (board[i][col] == '.') {
+                    board[lastTop = i][lastCol = col] = symbol;
+                    return;
+                }
+            }
+
+            System.out.println("Column " + col + " is full.");
+        } while (true);
+    }
+
+    /**
+     * Check if the last move wins.
+     */
+    public boolean isWinningPlay() {
+        char sym = board[lastTop][lastCol];
+        String strip = String.format("%c%c%c%c", sym, sym, sym, sym);
+
+        return contains(horizontal(), strip) ||
+                contains(vertical(), strip) ||
+                contains(rightDiagonal(), strip) ||
+                contains(leftDiagonal(), strip);
+    }
+
+    private String horizontal() {
+        return new String(board[lastTop]);
+    }
+
+    private String vertical() {
+        StringBuilder sb = new StringBuilder(height);
+
+        for (int i = 0; i < height; i++) {
+            sb.append(board[i][lastCol]);
+        }
+        return sb.toString();
+    }
+
+    private String rightDiagonal() {
+        StringBuilder sb = new StringBuilder(height);
+
+        for (int i = 0; i < height; i++) {
+            int j = lastCol + lastTop - i;
+            if (j >= 0 && j < width) {
+                sb.append(board[i][j]);
+            }
+        }
+        return sb.toString();
+    }
+
+    private String leftDiagonal() {
+        StringBuilder sb = new StringBuilder(height);
+
+        for (int i = 0; i < height; i++) {
+            int j = lastCol - lastTop + i;
+            if (j >= 0 && j < width) {
+                sb.append(board[i][j]);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static boolean contains(String haystack, String needle) {
+        return haystack.indexOf(needle) >= 0;
+    }
+}
