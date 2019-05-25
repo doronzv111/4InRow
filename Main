@@ -1,0 +1,28 @@
+import java.util.Scanner;
+
+public class Main{
+    private static final char[] players = new char[] { 'X', 'O' };
+
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        int height = 6;
+        int width = 8;
+        int range = height * width;
+        ConnectFour board = new ConnectFour(width, height);
+
+        System.out.println("Four in row, between 0 - " + (width - 1) + " columns.");
+        System.out.println(board);
+
+        for (int player = 0; range-- > 0; player = 1 - player) {
+            char logo = players[player];
+            board.updateBoardBySelection(logo, input);
+            System.out.println(board);
+            if (board.isWinningPlay()) {
+                System.out.println("Player " + logo + " wins!!!!!!");
+                return;
+            }
+        }
+        System.out.println("Game over, without winner.");
+    }
+
+}
